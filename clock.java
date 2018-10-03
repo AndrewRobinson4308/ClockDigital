@@ -3,10 +3,6 @@ import java.awt.*;
 import java.util.Calendar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
 
 public class clock extends JFrame{
 	
@@ -18,31 +14,35 @@ public class clock extends JFrame{
 	JPanel frame3 = new JPanel();
 	Font AlarmFont;
 	
+	Timer StopwatchTimer;
+	int OneSecond = 1000;
+	int TenthOfASecond = 100;
+
+
+	JButton Start, Stop, Reset;
+	JLabel StopLable;
+
+	int StopwatchTick;
+	double StopwatchTime;
+	String StopwatchTimeString;
 	
 	public clock(){
-		//MainFrame.setTitle("Digital Clock");
-		MainFrame.setSize(400,400);
+		
+		//MainFrame setup
+		MainFrame.setSize(500,300);
 		MainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		MainFrame.setVisible(true);
 		MainFrame.setResizable(true);
 		MainFrame.setLocationRelativeTo(null);
-		
+			
 		MainFrame.add(frame1,BorderLayout.NORTH);
 		MainFrame.add(frame2,BorderLayout.CENTER);
 		MainFrame.add(frame3,BorderLayout.SOUTH);
-		
-		frame1.setBackground(Color.CYAN);
-		frame2.setBackground(Color.YELLOW);
-		frame3.setBackground(Color.BLUE);
+
 		
 		
+		//Font setup
 		
-		
-		//frame1 = new JPanel();
-		frame1.setLayout(new FlowLayout());
-		
-		//MainClock = new JLabel();
-			
 		GraphicsEnvironment ge = null;
 		try {
 			AlarmFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getClassLoader().getResourceAsStream("AlarmClock.ttf")).deriveFont(80f);
@@ -51,37 +51,87 @@ public class clock extends JFrame{
 	    }
 	    catch (Exception e) {
 	        e.printStackTrace();
+	        JOptionPane.showMessageDialog(null, "Please place AlarmClock.ttf into .class location.", "Font Error", JOptionPane.WARNING_MESSAGE);
+	        MainFrame.dispose();
 	    }
 		
-		//MainClock.setBounds(600, 600, 600, 600);
-		MainClock.setFont(AlarmFont);
 		
+		//Clock setup
+		MainClock.setFont(AlarmFont);
 		frame1.add(MainClock);
 		frame1.setVisible(true);
+
 		
-		//add(frame1);
+		//StopWatch
+
+		StopwatchTick = 0;
+		StopwatchTime = ((double)StopwatchTick)/10.0;
+
+		StopwatchTimeString = new Double(StopwatchTime).toString();
+
+		StopLable = new JLabel();
+		StopLable.setFont(AlarmFont);
+		StopLable.setText(StopwatchTimeString);
+
+		Start = new JButton("Start");
+		Stop = new JButton("Stop");
+		Reset = new JButton("Reset");
+
+
+		StopwatchTimer = new Timer(TenthOfASecond, new ActionListener() {
+		public void actionPerformed(ActionEvent evt) {
+			StopwatchTick++;
+			StopwatchTime = ((double)StopwatchTick)/10.0;
+			StopwatchTimeString = new Double(StopwatchTime).toString();
+			StopLable.setText(StopwatchTimeString);
+		    }
+		});
+
+
+		Start.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent evt){
+				StopwatchTimer.start();
+			}
+		});
+
+		Stop.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent evt){
+				StopwatchTimer.stop();
+			}
+		});
+
+		Reset.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent evt){
+				StopwatchTick = 0;
+				StopwatchTime = ((double)StopwatchTick)/10.0;
+				StopwatchTimeString = new Double(StopwatchTime).toString();
+				StopLable.setText(StopwatchTimeString);
+			}
+		});
+		
+		frame3.add(StopLable);
+		frame3.add(Start);
+		frame3.add(Stop);
+		frame3.add(Reset);
 		
 		
-		//JButton AlarmButton = new JButton("Set Alarm");
-		//AlarmButton.setBounds(0,0,0,0);
-		//frame2.add(AlarmButton);
 		
-		
-		
+		//clock startup
 		
 		Timer t = new Timer(1000, new Updater());	
 		t.start();
 	}
+	
 	
 	class Updater implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 			
 			Calendar rightNow = Calendar.getInstance();
 			
-			
 			int hour = rightNow.get(Calendar.HOUR_OF_DAY);
 			int mins = rightNow.get(Calendar.MINUTE);
 			int second = rightNow.get(Calendar.SECOND);
+
 			
 			MainClock.setText(hour + ":" + mins + ":" + second);
 			
