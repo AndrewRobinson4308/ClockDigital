@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 
 public class clock extends JFrame{
 	
-	
+	//Clock declarations
 	JFrame MainFrame = new JFrame("Digital Clock");
 	JLabel MainClock = new JLabel();
 	JPanel frame1 = new JPanel();
@@ -14,10 +14,10 @@ public class clock extends JFrame{
 	JPanel frame3 = new JPanel();
 	Font AlarmFont;
 	
+	//Stopwatch declarations
 	Timer StopwatchTimer;
 	int OneSecond = 1000;
 	int TenthOfASecond = 100;
-
 
 	JButton Start, Stop, Reset;
 	JLabel StopLable;
@@ -26,6 +26,7 @@ public class clock extends JFrame{
 	double StopwatchTime;
 	String StopwatchTimeString;
 	
+	//Alarm declarations
 	int TempHour;
 	int TempMinute;
 	int TempSecond;
@@ -39,6 +40,7 @@ public class clock extends JFrame{
 		MainFrame.setResizable(true);
 		MainFrame.setLocationRelativeTo(null);
 			
+		//Panel format
 		MainFrame.add(frame1,BorderLayout.NORTH);
 		MainFrame.add(frame2,BorderLayout.CENTER);
 		MainFrame.add(frame3,BorderLayout.SOUTH);
@@ -46,7 +48,6 @@ public class clock extends JFrame{
 		
 		
 		//Font setup
-		
 		GraphicsEnvironment ge = null;
 		try {
 			AlarmFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getClassLoader().getResourceAsStream("AlarmClock.ttf")).deriveFont(80f);
@@ -55,8 +56,9 @@ public class clock extends JFrame{
 	    }
 	    catch (Exception e) {
 	        e.printStackTrace();
-	        JOptionPane.showMessageDialog(null, "Please place AlarmClock.ttf into .class location.", "Font Error", JOptionPane.WARNING_MESSAGE);
-	        AlarmFont = new Font("Serif", Font.BOLD, 24);
+	        Toolkit.getDefaultToolkit().beep();
+	        JOptionPane.showMessageDialog(null, "Please place AlarmClock.ttf into .class location.\nProgram will now close.", "Font Error", JOptionPane.WARNING_MESSAGE);
+	        MainFrame.dispose();
 	    }
 		
 		
@@ -69,6 +71,7 @@ public class clock extends JFrame{
 		
 		//Alarm
 		
+		//Alarm GUI
 		JLabel AlarmHourLable = new JLabel("Hour");
 		frame2.add(AlarmHourLable);
 		final JTextField AlarmHour = new JTextField();
@@ -91,27 +94,35 @@ public class clock extends JFrame{
 		frame2.add(AlarmSet);
 
 
+		//Alarm Listener
 		AlarmSet.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent evt){
 				
+				//check if text fields have values
 				if (AlarmHour.getText() == null || AlarmHour.getText().trim().isEmpty()
 					|| AlarmMinute.getText() == null || AlarmMinute.getText().trim().isEmpty()
 					|| AlarmSecond.getText() == null || AlarmSecond.getText().trim().isEmpty()) {
 					
+					Toolkit.getDefaultToolkit().beep();
 					JOptionPane.showMessageDialog(null, "All field must have a value." , "Missing Fields", JOptionPane.WARNING_MESSAGE);
 				}
 				else {
 				
+					//changes input to integers
 					TempHour = Integer.parseInt(AlarmHour.getText().toString());
 					TempMinute = Integer.parseInt(AlarmMinute.getText().toString());
 					TempSecond = Integer.parseInt(AlarmSecond.getText().toString());
 					
+					//Checks alarm input
 					if (TempHour >=0 && TempHour <=23 && TempMinute >= 0 && TempMinute <=59 && TempSecond >= 0 && TempSecond <=59) {
+						
+						Toolkit.getDefaultToolkit().beep();
+						JOptionPane.showMessageDialog(null, "Alarm set to:  " + TempHour +":" + TempMinute + ":" + TempSecond , "Alarm Set", JOptionPane.WARNING_MESSAGE);
 						
 					}
 					else {
-						
-						JOptionPane.showMessageDialog(null, "Hour must be between 0-23. Minute and second must be between 0-59" , "Invalid alarm", JOptionPane.WARNING_MESSAGE);
+						Toolkit.getDefaultToolkit().beep();
+						JOptionPane.showMessageDialog(null, "Hour must be between 0-23. Minute and second must be between 0-59" , "Invalid alarm input", JOptionPane.WARNING_MESSAGE);
 						
 					}
 					
@@ -124,6 +135,7 @@ public class clock extends JFrame{
 		
 		//StopWatch
 
+		//Stopwatch declarations and GUI
 		StopwatchTick = 0;
 		StopwatchTime = ((double)StopwatchTick)/10.0;
 
@@ -137,7 +149,8 @@ public class clock extends JFrame{
 		Stop = new JButton("Stop");
 		Reset = new JButton("Reset");
 
-
+		
+		//Stopwatch
 		StopwatchTimer = new Timer(TenthOfASecond, new ActionListener() {
 		public void actionPerformed(ActionEvent evt) {
 			StopwatchTick++;
@@ -147,19 +160,21 @@ public class clock extends JFrame{
 		    }
 		});
 
-
+		//Stopwatch start listener
 		Start.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent evt){
 				StopwatchTimer.start();
 			}
 		});
 
+		//Stowatch stop listener
 		Stop.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent evt){
 				StopwatchTimer.stop();
 			}
 		});
 
+		//Stopwatch stop listener
 		Reset.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent evt){
 				StopwatchTick = 0;
@@ -169,6 +184,7 @@ public class clock extends JFrame{
 			}
 		});
 		
+		//Draws stopwatch
 		frame3.add(StopLable);
 		frame3.add(Start);
 		frame3.add(Stop);
@@ -176,13 +192,13 @@ public class clock extends JFrame{
 		
 		
 		
-		//clock startup
-		
+		//Draws clock
 		Timer t = new Timer(1000, new Updater());	
 		t.start();
 	}
 	
 	
+	//Clock listener class
 	class Updater implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 			
@@ -192,11 +208,13 @@ public class clock extends JFrame{
 			int mins = rightNow.get(Calendar.MINUTE);
 			int second = rightNow.get(Calendar.SECOND);
 			
+			//Alarm checker
 			if (TempHour == hour && TempMinute == mins && TempSecond == second) {
 				Toolkit.getDefaultToolkit().beep();
 				JOptionPane.showMessageDialog(null, "ALARM", "WAKE UP", JOptionPane.WARNING_MESSAGE);
 			}
 			
+			//Sets time
 			MainClock.setText(hour + ":" + mins + ":" + second);
 			
 		}	
