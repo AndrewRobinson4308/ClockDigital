@@ -34,6 +34,7 @@ public class clock extends JFrame{
 	public clock(){
 		
 		//MainFrame setup
+		//Sets up the window size and attributes that contains all the panels
 		MainFrame.setSize(500,300);
 		MainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		MainFrame.setVisible(true);
@@ -41,6 +42,7 @@ public class clock extends JFrame{
 		MainFrame.setLocationRelativeTo(null);
 			
 		//Panel format
+		//creates the panels and sets their location
 		MainFrame.add(frame1,BorderLayout.NORTH);
 		MainFrame.add(frame2,BorderLayout.CENTER);
 		MainFrame.add(frame3,BorderLayout.SOUTH);
@@ -48,6 +50,7 @@ public class clock extends JFrame{
 		
 		
 		//Font setup
+		//Creates a custom font for a .ttf(true type font) file
 		GraphicsEnvironment ge = null;
 		try {
 			AlarmFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getClassLoader().getResourceAsStream("AlarmClock.ttf")).deriveFont(80f);
@@ -63,6 +66,7 @@ public class clock extends JFrame{
 		
 		
 		//Clock setup
+		//Adds clock to the window
 		MainClock.setFont(AlarmFont);
 		frame1.add(MainClock);
 		frame1.setVisible(true);
@@ -72,6 +76,7 @@ public class clock extends JFrame{
 		//Alarm
 		
 		//Alarm GUI
+		//Creates the alarms labels, text fields and buttons
 		JLabel AlarmHourLable = new JLabel("Hour");
 		frame2.add(AlarmHourLable);
 		final JTextField AlarmHour = new JTextField();
@@ -95,16 +100,30 @@ public class clock extends JFrame{
 
 
 		//Alarm Listener
+		//Waits for the set alarm button to be pressed
 		AlarmSet.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent evt){
 				
-				//check if text fields have values
+				
+				//sets boolean if the text fields are numbers or not
+		        boolean nonnumeric = false;
+		        try {
+		            Integer num = Integer.parseInt(AlarmHour.getText());
+		            num = Integer.parseInt(AlarmMinute.getText());
+		            num = Integer.parseInt(AlarmSecond.getText());
+		        } 
+		        catch (NumberFormatException e) {
+		            nonnumeric = true;
+		        }
+				
+		      //check if text fields have values and are numbers
 				if (AlarmHour.getText() == null || AlarmHour.getText().trim().isEmpty()
 					|| AlarmMinute.getText() == null || AlarmMinute.getText().trim().isEmpty()
-					|| AlarmSecond.getText() == null || AlarmSecond.getText().trim().isEmpty()) {
+					|| AlarmSecond.getText() == null || AlarmSecond.getText().trim().isEmpty() 
+					|| nonnumeric) {
 					
 					Toolkit.getDefaultToolkit().beep();
-					JOptionPane.showMessageDialog(null, "All field must have a value." , "Missing Fields", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null, "All fields must have a number value." , "Incorrect/Missing Fields", JOptionPane.WARNING_MESSAGE);
 				}
 				else {
 				
@@ -114,19 +133,16 @@ public class clock extends JFrame{
 					TempSecond = Integer.parseInt(AlarmSecond.getText().toString());
 					
 					//Checks alarm input
-					if (TempHour >=0 && TempHour <=23 && TempMinute >= 0 && TempMinute <=59 && TempSecond >= 0 && TempSecond <=59) {
-						
+					if (TempHour >=0 && TempHour <=23 && TempMinute >= 0 && TempMinute <=59 && TempSecond >= 0 && TempSecond <=59) {						
 						Toolkit.getDefaultToolkit().beep();
 						JOptionPane.showMessageDialog(null, "Alarm set to:  " + TempHour +":" + TempMinute + ":" + TempSecond , "Alarm Set", JOptionPane.WARNING_MESSAGE);
-						
 					}
 					else {
+						//throws input error
 						Toolkit.getDefaultToolkit().beep();
 						JOptionPane.showMessageDialog(null, "Hour must be between 0-23. Minute and second must be between 0-59" , "Invalid alarm input", JOptionPane.WARNING_MESSAGE);
-						
 					}
 					
-
 				}	
 			}
 		});
@@ -150,7 +166,7 @@ public class clock extends JFrame{
 		Reset = new JButton("Reset");
 
 		
-		//Stopwatch
+		//Stopwatch counter
 		StopwatchTimer = new Timer(TenthOfASecond, new ActionListener() {
 		public void actionPerformed(ActionEvent evt) {
 			StopwatchTick++;
